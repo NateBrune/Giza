@@ -31,6 +31,8 @@ scroll = "https://rpc.scroll.io"
 [etherscan]
 polygonMumbai = { key = "${ETHERSCAN_API_KEY}" }
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
+arbitrum = { key = "AT3BXUA8RGPERKGHBCV3A5YDNSQMAHK72E" }
+optimism = { key = "T85B46WPXA9Y4MU2CHC46UNZPTKU6BV911" }
 
 
 [fmt]

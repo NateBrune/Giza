@@ -12,7 +12,7 @@ import {
 import { hardhat } from "viem/chains";
 import { decodeTransactionData } from "~~/utils/scaffold-eth";
 
-const BLOCKS_PER_PAGE = 20;
+const BLOCKS_PER_PAGE = 1;
 
 export const testClient = createTestClient({
   chain: hardhat,

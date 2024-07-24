@@ -1,12 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "../contracts/StargateProxy.sol";
-import "../contracts/MockWETH.sol";
+import "../contracts/YourContract.sol";
 import "./DeployHelpers.s.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
-// This was coded with the Arbitrum address for WETH
 
 contract DeployScript is ScaffoldETHDeploy {
   error InvalidPrivateKey(string);
@@ -19,11 +15,11 @@ contract DeployScript is ScaffoldETHDeploy {
       );
     }
     vm.startBroadcast(deployerPrivateKey);
-    MockWETH mock = new MockWETH("Mock Weth", "WETH");
-    StargateProxy yourContract = new StargateProxy(IERC20(address(mock)), "Giza WETH", "gzETH");
+
+    YourContract yourContract = new YourContract(vm.addr(deployerPrivateKey));
     console.logString(
       string.concat(
-        "StargateProxy deployed at: ", vm.toString(address(yourContract))
+        "YourContract deployed at: ", vm.toString(address(yourContract))
       )
     );
 
