@@ -7,3 +7,6 @@
 [submodule "packages/foundry/lib/solidity-bytes-utils"]
 	path = packages/foundry/lib/solidity-bytes-utils
 	url = https://github.com/gnsps/solidity-bytes-utils
+[submodule "packages/foundry/lib/LayerZero-v2"]
+	path = packages/foundry/lib/LayerZero-v2
+	url = https://github.com/LayerZero-Labs/LayerZero-v2
