@@ -9,10 +9,10 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "interfaces/IStargatePool.sol";
-import "interfaces/IStargateStaking.sol";
-import "interfaces/IStargate.sol";
-import "interfaces/IWeth.sol";
+import "lib/interfaces/IStargatePool.sol";
+import "lib/interfaces/IStargateStaking.sol";
+import "lib/interfaces/IStargate.sol";
+import "lib/interfaces/IWeth.sol";
 
 contract StargateProxy is ERC4626{
   // using IERC20Metadata for IERC20;
@@ -25,20 +25,20 @@ contract StargateProxy is ERC4626{
     IERC20 _asset,
     string memory _name,
     string memory _symbol,
-    address _stargate,
+    //address _stargate,
     address _stargatePool,
     address _stargateStaking,
     address _lpToken,
     address _rewardToken
   ) ERC20(_name, _symbol) ERC4626(_asset) {
-    stargate = IStargate(_stargate);
+    //stargate = IStargate(_stargate);
     stargatePool = IStargatePool(_stargatePool);
     stargateStaking = IStargateStaking(_stargateStaking);
     lpToken = IERC20(_lpToken);
-    lpToken.approve(address(stargateStaking), type(uint256).max);
+    // IERC20(address(stargatePool)).approve(address(stargateStaking), type(uint256).max);
     rewardToken = IERC20(_rewardToken);
     
-    rewardToken.approve(address(stargate), type(uint256).max);
+    //rewardToken.approve(address(stargate), type(uint256).max);
   }
       
   fallback() external payable {
@@ -46,7 +46,8 @@ contract StargateProxy is ERC4626{
   }
 
   receive() external payable {
-    deposit(msg.value, msg.sender);
+    // Recieve ETH from WETH 
+    return;
   }
 
   // Deposit into Vault
@@ -56,14 +57,16 @@ contract StargateProxy is ERC4626{
     console.log("%s minted %s shares", _receiver, shares, this.symbol());
 
     // Get Native Eth
+    console.log("withdraw( %s ) from contract: %s", _amount, address(asset()));
     IWeth weth = IWeth(address(asset()));
     weth.withdraw(_amount);
 
-    // Deposit into Stargate
+    // // Deposit into Stargate
     uint256 amountLD = stargatePool.deposit{ value: _amount }(address(this), _amount);
     console.log("Amount of LP Given from Stargate: %s", amountLD);
 
     // Stake LP
+    lpToken.approve(address(stargateStaking), amountLD);
     stargateStaking.deposit(lpToken, amountLD);
     return shares;
   }
@@ -85,71 +88,10 @@ contract StargateProxy is ERC4626{
   }
 
   // Harvest rewards from Stargate and them to 
-  function harvest() public {
-    stargateStaking.claim([lpToken]);
+  // function harvest() public {
+  //   IERC20[] calldata tokens = new IERC20[](1);
+  //   tokens[0] = lpToken;
+  //   stargateStaking.claim(tokens);
 
-  }
-
-  // UTILITY FUNCTIONS
-  function prepareRideBus(
-    address _stargate,
-    uint32 _dstEid,
-    uint256 _amount,
-    address _receiver
-    ) external view returns (uint256 valueToSend, SendParam memory sendParam, MessagingFee memory messagingFee) {
-    sendParam = SendParam({
-        dstEid: _dstEid,
-        to: addressToBytes32(_receiver),
-        amountLD: _amount,
-        minAmountLD: _amount,
-        extraOptions: new bytes(0),
-        composeMsg: new bytes(0),
-        oftCmd: new bytes(1)
-    });
-
-    IStargate stargate = IStargate(_stargate);
-
-    (, , OFTReceipt memory receipt) = stargate.quoteOFT(sendParam);
-    sendParam.minAmountLD = receipt.amountReceivedLD;
-
-    messagingFee = stargate.quoteSend(sendParam, false);
-    valueToSend = messagingFee.nativeFee;
-
-    if (stargate.token() == address(0x0)) {
-        valueToSend += sendParam.amountLD;
-    }
-  }
-
-  function prepareTakeTaxi(
-      address _stargate,
-      uint32 _dstEid,
-      uint256 _amount,
-      address _receiver
-  ) external view returns (uint256 valueToSend, SendParam memory sendParam, MessagingFee memory messagingFee) {
-      sendParam = SendParam({
-          dstEid: _dstEid,
-          to: addressToBytes32(_receiver),
-          amountLD: _amount,
-          minAmountLD: _amount,
-          extraOptions: new bytes(0),
-          composeMsg: new bytes(0),
-          oftCmd: ""
-      });
-
-      IStargate stargate = IStargate(_stargate);
-
-      (, , OFTReceipt memory receipt) = stargate.quoteOFT(sendParam);
-      sendParam.minAmountLD = receipt.amountReceivedLD;
-
-      messagingFee = stargate.quoteSend(sendParam, false);
-      valueToSend = messagingFee.nativeFee;
-
-      if (stargate.token() == address(0x0)) {
-          valueToSend += sendParam.amountLD;
-      }
-  }
-
-  function addressToBytes32(address _addr) internal pure returns (bytes32) {
-      return bytes32(uint256(uint160(_addr)));
-  }
+  // }
 }

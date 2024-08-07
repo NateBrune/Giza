@@ -57,7 +57,7 @@ contract DiscreteStakingRewardsTest is Test {
         vm.stopPrank();
     }
 
-    function testInitialization() public {
+    function testInitialization() public view {
         assertEq(address(stakingRewards.stakingToken()), address(stakingToken));
         assertEq(address(stakingRewards.rewardToken()), address(rewardToken));
     }
