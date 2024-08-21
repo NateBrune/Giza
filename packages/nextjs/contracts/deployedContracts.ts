@@ -5,9 +5,9 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
-  31337: {
+  11155111: {
     MockWETH: {
-      address: "0xa138575a030a2f4977d19cc900781e7be3fd2bc0",
+      address: "0x2c984279cfb2b44bb62aab00d5b3dbcfd8486077",
       abi: [
         {
           type: "constructor",
@@ -24,6 +24,14 @@ const deployedContracts = {
             },
           ],
           stateMutability: "nonpayable",
+        },
+        {
+          type: "fallback",
+          stateMutability: "payable",
+        },
+        {
+          type: "receive",
+          stateMutability: "payable",
         },
         {
           type: "function",
@@ -122,6 +130,13 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "deposit",
+          inputs: [],
+          outputs: [],
+          stateMutability: "payable",
         },
         {
           type: "function",
@@ -234,6 +249,19 @@ const deployedContracts = {
           stateMutability: "nonpayable",
         },
         {
+          type: "function",
+          name: "withdraw",
+          inputs: [
+            {
+              name: "wad",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
           type: "event",
           name: "Approval",
           inputs: [
@@ -260,6 +288,25 @@ const deployedContracts = {
         },
         {
           type: "event",
+          name: "Deposit",
+          inputs: [
+            {
+              name: "dst",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "wad",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
           name: "Transfer",
           inputs: [
             {
@@ -276,6 +323,25 @@ const deployedContracts = {
             },
             {
               name: "value",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "Withdrawal",
+          inputs: [
+            {
+              name: "src",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "wad",
               type: "uint256",
               indexed: false,
               internalType: "uint256",
@@ -382,94 +448,71 @@ const deployedContracts = {
         transferFrom: "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
       },
     },
-    StargateProxy: {
-      address: "0xb8d6d6b01bfe81784be46e5771ef017fa3c906d8",
+    DiscreteStakingRewardsStargateEth: {
+      address: "0x98b6f90e84eff32643994df7f36294754b99ec7e",
       abi: [
         {
           type: "constructor",
           inputs: [
             {
-              name: "_asset",
-              type: "address",
-              internalType: "contract IERC20",
-            },
-            {
-              name: "_name",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "_symbol",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "allowance",
-          inputs: [
-            {
-              name: "owner",
+              name: "_stakingToken",
               type: "address",
               internalType: "address",
             },
             {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "approve",
-          inputs: [
-            {
-              name: "spender",
+              name: "_rewardToken",
               type: "address",
               internalType: "address",
             },
             {
-              name: "value",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
+              name: "_isWrapped",
               type: "bool",
               internalType: "bool",
             },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "asset",
-          inputs: [],
-          outputs: [
             {
-              name: "",
+              name: "_stargatePool",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_stargateStaking",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_lpToken",
               type: "address",
               internalType: "address",
             },
           ],
-          stateMutability: "view",
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "receive",
+          stateMutability: "payable",
         },
         {
           type: "function",
           name: "balanceOf",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "calculateRewardsEarned",
           inputs: [
             {
               name: "account",
@@ -488,70 +531,8 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "convertToAssets",
-          inputs: [
-            {
-              name: "shares",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "convertToShares",
-          inputs: [
-            {
-              name: "assets",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "decimals",
+          name: "claim",
           inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint8",
-              internalType: "uint8",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "deposit",
-          inputs: [
-            {
-              name: "_amount",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "_receiver",
-              type: "address",
-              internalType: "address",
-            },
-          ],
           outputs: [
             {
               name: "",
@@ -563,244 +544,91 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "maxDeposit",
-          inputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
+          name: "isWrapped",
+          inputs: [],
           outputs: [
             {
               name: "",
-              type: "uint256",
-              internalType: "uint256",
+              type: "bool",
+              internalType: "bool",
             },
           ],
           stateMutability: "view",
         },
         {
           type: "function",
-          name: "maxMint",
-          inputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
+          name: "lpToken",
+          inputs: [],
           outputs: [
             {
               name: "",
-              type: "uint256",
-              internalType: "uint256",
+              type: "address",
+              internalType: "contract IERC20",
             },
           ],
           stateMutability: "view",
         },
         {
           type: "function",
-          name: "maxRedeem",
-          inputs: [
-            {
-              name: "owner",
-              type: "address",
-              internalType: "address",
-            },
-          ],
+          name: "rewardToken",
+          inputs: [],
           outputs: [
             {
               name: "",
-              type: "uint256",
-              internalType: "uint256",
+              type: "address",
+              internalType: "contract IERC20",
             },
           ],
           stateMutability: "view",
         },
         {
           type: "function",
-          name: "maxWithdraw",
+          name: "stake",
           inputs: [
             {
-              name: "owner",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
+              name: "amount",
               type: "uint256",
               internalType: "uint256",
             },
           ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "mint",
-          inputs: [
-            {
-              name: "shares",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "receiver",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
+          outputs: [],
           stateMutability: "nonpayable",
         },
         {
           type: "function",
-          name: "name",
+          name: "stakingToken",
           inputs: [],
           outputs: [
             {
               name: "",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "previewDeposit",
-          inputs: [
-            {
-              name: "assets",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "previewMint",
-          inputs: [
-            {
-              name: "shares",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "previewRedeem",
-          inputs: [
-            {
-              name: "shares",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "previewWithdraw",
-          inputs: [
-            {
-              name: "assets",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "redeem",
-          inputs: [
-            {
-              name: "shares",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "receiver",
               type: "address",
-              internalType: "address",
-            },
-            {
-              name: "owner",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "symbol",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "string",
-              internalType: "string",
+              internalType: "contract IERC20",
             },
           ],
           stateMutability: "view",
         },
         {
           type: "function",
-          name: "totalAssets",
+          name: "stargatePool",
           inputs: [],
           outputs: [
             {
               name: "",
-              type: "uint256",
-              internalType: "uint256",
+              type: "address",
+              internalType: "contract IStargatePool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "stargateStaking",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract IStargateStaking",
             },
           ],
           stateMutability: "view",
@@ -820,445 +648,32 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "transfer",
+          name: "unstake",
           inputs: [
             {
-              name: "to",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "value",
+              name: "amount",
               type: "uint256",
               internalType: "uint256",
             },
           ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
+          outputs: [],
           stateMutability: "nonpayable",
         },
         {
           type: "function",
-          name: "transferFrom",
+          name: "updateRewardIndex",
           inputs: [
             {
-              name: "from",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "to",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "value",
+              name: "reward",
               type: "uint256",
               internalType: "uint256",
             },
           ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
+          outputs: [],
           stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "withdraw",
-          inputs: [
-            {
-              name: "assets",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "receiver",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "owner",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "event",
-          name: "Approval",
-          inputs: [
-            {
-              name: "owner",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "spender",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "value",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "Deposit",
-          inputs: [
-            {
-              name: "sender",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "owner",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "assets",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-            {
-              name: "shares",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "Transfer",
-          inputs: [
-            {
-              name: "from",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "to",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "value",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "Withdraw",
-          inputs: [
-            {
-              name: "sender",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "receiver",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "owner",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "assets",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-            {
-              name: "shares",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "error",
-          name: "AddressEmptyCode",
-          inputs: [
-            {
-              name: "target",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "AddressInsufficientBalance",
-          inputs: [
-            {
-              name: "account",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InsufficientAllowance",
-          inputs: [
-            {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "allowance",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "needed",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InsufficientBalance",
-          inputs: [
-            {
-              name: "sender",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "balance",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "needed",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidApprover",
-          inputs: [
-            {
-              name: "approver",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidReceiver",
-          inputs: [
-            {
-              name: "receiver",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidSender",
-          inputs: [
-            {
-              name: "sender",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidSpender",
-          inputs: [
-            {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC4626ExceededMaxDeposit",
-          inputs: [
-            {
-              name: "receiver",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "assets",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "max",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC4626ExceededMaxMint",
-          inputs: [
-            {
-              name: "receiver",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "shares",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "max",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC4626ExceededMaxRedeem",
-          inputs: [
-            {
-              name: "owner",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "shares",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "max",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC4626ExceededMaxWithdraw",
-          inputs: [
-            {
-              name: "owner",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "assets",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "max",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "FailedInnerCall",
-          inputs: [],
-        },
-        {
-          type: "error",
-          name: "MathOverflowedMulDiv",
-          inputs: [],
-        },
-        {
-          type: "error",
-          name: "SafeERC20FailedOperation",
-          inputs: [
-            {
-              name: "token",
-              type: "address",
-              internalType: "address",
-            },
-          ],
         },
       ],
-      inheritedFunctions: {
-        allowance: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        approve: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        asset: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        balanceOf: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        convertToAssets: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        convertToShares: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        decimals: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        deposit: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        maxDeposit: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        maxMint: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        maxRedeem: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        maxWithdraw: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        mint: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        name: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        previewDeposit: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        previewMint: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        previewRedeem: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        previewWithdraw: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        redeem: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        symbol: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        totalAssets: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        totalSupply: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        transfer: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        transferFrom: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-        withdraw: "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC4626.sol",
-      },
+      inheritedFunctions: {},
     },
   },
 } as const;

@@ -43,6 +43,7 @@ contract DiscreteStakingRewardsTest is Test {
 
     address user = address(0x123);
     address rewardDistributor = address(0x456);
+    uint256 startAmount = 10 ether;
 
     function setUp() public {
         stakingToken = new MockERC20();
@@ -62,55 +63,55 @@ contract DiscreteStakingRewardsTest is Test {
         assertEq(address(stakingRewards.rewardToken()), address(rewardToken));
     }
 
-    function testStake() public {
+    function test_stake() public {
         vm.startPrank(user);
-        stakingRewards.stake(100 * 1e18);
+        stakingRewards.stake(startAmount);
         vm.stopPrank();
 
-        assertEq(stakingRewards.balanceOf(user), 100 * 1e18);
-        assertEq(stakingRewards.totalSupply(), 100 * 1e18);
+        assertEq(stakingRewards.balanceOf(user), startAmount);
+        assertEq(stakingRewards.totalSupply(), startAmount);
     }
 
     function testUnstake() public {
         vm.startPrank(user);
-        stakingRewards.stake(100 * 1e18);
-        stakingRewards.unstake(50 * 1e18);
+        stakingRewards.stake(startAmount);
+        stakingRewards.unstake(startAmount/2);
         vm.stopPrank();
 
-        assertEq(stakingRewards.balanceOf(user), 50 * 1e18);
-        assertEq(stakingRewards.totalSupply(), 50 * 1e18);
+        assertEq(stakingRewards.balanceOf(user), startAmount/2);
+        assertEq(stakingRewards.totalSupply(), startAmount/2);
     }
 
     function testRewardCalculation() public {
         vm.startPrank(user);
-        stakingRewards.stake(100 * 1e18);
+        stakingRewards.stake(startAmount);
         vm.stopPrank();
 
         vm.startPrank(rewardDistributor);
-        rewardToken.approve(address(stakingRewards), 100 * 1e18);
-        stakingRewards.updateRewardIndex(100 * 1e18);
+        rewardToken.approve(address(stakingRewards), startAmount);
+        stakingRewards.updateRewardIndex(startAmount);
         vm.stopPrank();
 
         uint256 rewards = stakingRewards.calculateRewardsEarned(user);
-        assertEq(rewards, 100 * 1e18);
+        assertEq(rewards, startAmount);
     }
 
     function testClaimRewards() public {
         vm.startPrank(user);
-        stakingRewards.stake(100 * 1e18);
+        stakingRewards.stake(startAmount);
         vm.stopPrank();
 
         vm.startPrank(rewardDistributor);
-        rewardToken.approve(address(stakingRewards), 100 * 1e18);
-        stakingRewards.updateRewardIndex(100 * 1e18);
+        rewardToken.approve(address(stakingRewards), startAmount);
+        stakingRewards.updateRewardIndex(startAmount);
         vm.stopPrank();
 
         vm.startPrank(user);
         uint256 claimed = stakingRewards.claim();
         vm.stopPrank();
 
-        assertEq(claimed, 100 * 1e18);
-        assertEq(rewardToken.balanceOf(user), 100 * 1e18);
+        assertEq(claimed, startAmount);
+        assertEq(rewardToken.balanceOf(user), startAmount);
         assertEq(stakingRewards.calculateRewardsEarned(user), 0);
     }
 }

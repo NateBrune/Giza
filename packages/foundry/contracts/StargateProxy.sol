@@ -88,10 +88,9 @@ contract StargateProxy is ERC4626{
   }
 
   // Harvest rewards from Stargate and them to 
-  // function harvest() public {
-  //   IERC20[] calldata tokens = new IERC20[](1);
-  //   tokens[0] = lpToken;
-  //   stargateStaking.claim(tokens);
-
-  // }
+  function harvest() public {
+    IERC20[] memory tokens = new IERC20[](1);
+    tokens[0] = lpToken;
+    stargateStaking.claim(tokens);
+  }
 }

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
+// Useful for debugging. Remove when deploying to a live network.
+import "forge-std/console.sol";
+
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract MockWETH is ERC20{
