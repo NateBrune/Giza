@@ -16,6 +16,7 @@ interface IDiscreteStakingRewardsStargateEth {
     function updateRewardIndex(uint256 reward) external;
     function calculateRewardsEarned(address account) external view returns (uint256);
     function stake(uint256 amount) external payable;
+    function stakeFor(uint256 amount, address user) external payable;
     function unstake(uint256 amount) external;
     function unstakeFor(uint256 amount, address user) external;
     function claim() external returns (uint256);

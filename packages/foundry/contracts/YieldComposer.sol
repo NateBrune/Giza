@@ -13,18 +13,18 @@ import { IDiscreteStakingRewardsStargateEth } from "lib/interfaces/IDiscreteStak
 contract YieldComposer is ILayerZeroComposer {
     // IMockAMM public immutable amm;
     address public immutable endpoint;
-    address public immutable stargate;
+    address public immutable oapp;
     address public warden;
     address public pendingWarden = address(0);
     address public immutable coin;
 
     event ReceivedOnDestination(address token);
 
-    constructor(address _endpoint, address _stargate) {
+    constructor(address _endpoint, address _oapp) {
         // amm = IMockAMM(_amm);
         // warden = _warden;
         endpoint = _endpoint;
-        stargate = _stargate; // The native OFT?
+        oapp = _oapp; //The address of the originating OApp.
     }
 
     // function setWarden(address _warden) external {
@@ -37,6 +37,11 @@ contract YieldComposer is ILayerZeroComposer {
     //     warden = pendingWarden;
     // }
 
+    /// @notice Handles incoming composed messages from LayerZero.
+    /// @dev Decodes the message payload and updates the state.
+    /// @param _from The address of the originating OApp.
+    /// @param /*_guid*/ The globally unique identifier of the message.
+    /// @param _message The encoded message content.
     function lzCompose(
         address _from,
         bytes32 _guid,
@@ -44,7 +49,7 @@ contract YieldComposer is ILayerZeroComposer {
         address _executor,
         bytes calldata _extraData
     ) external payable {
-        require(_from == stargate, "!stargate");
+        require(_from == oapp, "!oapp");
         require(msg.sender == endpoint, "!endpoint");
 
         uint256 amountLD = OFTComposeMsgCodec.amountLD(_message);
@@ -54,7 +59,7 @@ contract YieldComposer is ILayerZeroComposer {
             abi.decode(_composeMessage, (address, uint, address, address));
 
         IERC20(oft).approve(vault, amount);
-        IDiscreteStakingRewardsStargateEth(vault).stake(amount);
+        IDiscreteStakingRewardsStargateEth(vault).stakeFor(amount);
 
         // IERC20(_oftOnDestination).approve(address(amm), amountLD);
 
